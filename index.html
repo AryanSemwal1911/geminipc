@@ -1,0 +1,794 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>1911</title>
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Rajdhani:wght@500;600;700&display=swap" rel="stylesheet">
+
+    <style>
+        :root {
+            --neon-purple: #bc00dd;
+            --neon-blue: #00f0ff;
+            --cyber-bg: #030308;
+            --glass-bg: rgba(10, 10, 20, 0.65);
+            --glass-border: rgba(0, 240, 255, 0.15);
+        }
+
+        body {
+            font-family: 'Rajdhani', sans-serif;
+            background-color: var(--cyber-bg);
+            color: #e2e8f0;
+            overflow-x: hidden;
+            background-image: 
+                radial-gradient(at 0% 0%, rgba(188, 0, 221, 0.15) 0px, transparent 50%),
+                radial-gradient(at 100% 100%, rgba(0, 240, 255, 0.12) 0px, transparent 50%);
+        }
+
+        .heading-font {
+            font-family: 'Orbitron', sans-serif;
+        }
+
+        /* Holographic Matrix Grid Background Effect */
+        .hologram-grid {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background-image: 
+                linear-gradient(rgba(0, 240, 255, 0.03) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(0, 240, 255, 0.03) 1px, transparent 1px);
+            background-size: 40px 40px;
+            transform: perspective(500px) rotateX(60deg) translateY(-200px) scale(2);
+            transform-origin: top center;
+            z-index: -1;
+            opacity: 0.6;
+            animation: gridMove 20s linear infinite;
+        }
+
+        @keyframes gridMove {
+            0% { background-position: 0 0; }
+            100% { background-position: 0 800px; }
+        }
+
+        /* Glassmorphism Panels */
+        .glass-panel {
+            background: var(--glass-bg);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid var(--glass-border);
+            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
+            transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+        }
+
+        .glass-panel:hover {
+            border-color: rgba(0, 240, 255, 0.3);
+            box-shadow: 0 8px 32px 0 rgba(0, 240, 255, 0.1);
+        }
+
+        /* Neon Custom Accents */
+        .neon-glow-purple {
+            box-shadow: 0 0 15px var(--neon-purple);
+        }
+        .neon-glow-blue {
+            box-shadow: 0 0 15px var(--neon-blue);
+        }
+        
+        .neon-text-blue {
+            text-shadow: 0 0 8px var(--neon-blue);
+        }
+        .neon-text-purple {
+            text-shadow: 0 0 8px var(--neon-purple);
+        }
+
+        /* Premium Custom Scrollbar */
+        ::-webkit-scrollbar {
+            width: 6px;
+            height: 6px;
+        }
+        ::-webkit-scrollbar-track {
+            background: rgba(3, 3, 8, 0.5);
+        }
+        ::-webkit-scrollbar-thumb {
+            background: rgba(0, 240, 255, 0.3);
+            border-radius: 3px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: var(--neon-blue);
+        }
+
+        /* 3D Chassis Rotation Container Animation */
+        .chassis-wrapper {
+            perspective: 1000px;
+        }
+        .chassis-view {
+            transform-style: preserve-3d;
+            transition: transform 0.1s ease-out;
+        }
+
+        /* Simulated Airflow Particle Vectors */
+        .fan-particle {
+            position: absolute;
+            width: 4px;
+            height: 4px;
+            border-radius: 50%;
+            opacity: 0;
+            pointer-events: none;
+        }
+
+        @keyframes intake-flow {
+            0% { transform: translateX(-40px) translateY(0); opacity: 0; }
+            20% { opacity: 0.8; }
+            80% { opacity: 0.8; }
+            100% { transform: translateX(120px) translateY(10px); opacity: 0; }
+        }
+
+        @keyframes exhaust-flow {
+            0% { transform: translateX(40px) translateY(-10px); opacity: 0; }
+            20% { opacity: 0.8; }
+            100% { transform: translateX(140px) translateY(-50px); opacity: 0; }
+        }
+
+        /* Cyberpunk Input Components Override */
+        select, input {
+            background: rgba(20, 20, 35, 0.8) !important;
+            border: 1px solid rgba(0, 240, 255, 0.2) !important;
+            color: #fff !important;
+            font-family: 'Rajdhani', sans-serif;
+        }
+        select:focus, input:focus {
+            outline: none !important;
+            border-color: var(--neon-blue) !important;
+            box-shadow: 0 0 10px rgba(0, 240, 255, 0.3) !important;
+        }
+
+        /* Splash Screen Loading System */
+        #splash-screen {
+            position: fixed;
+            top:0; left:0; width:100%; height:100%;
+            background: var(--cyber-bg);
+            z-index: 9999;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            transition: opacity 0.6s ease;
+        }
+    </style>
+</head>
+<body class="p-3 md:p-6 min-h-screen">
+
+    <div class="hologram-grid"></div>
+
+    <div id="splash-screen">
+        <div class="heading-font text-3xl font-black text-transparent bg-clip-text bg-gradient-to-r from-[var(--neon-blue)] to-[var(--neon-purple)] tracking-widest mb-4 animate-pulse">
+            1911 ENGINE INITIALIZING
+        </div>
+        <div class="w-64 h-1 bg-neutral-800 rounded-full overflow-hidden relative">
+            <div class="h-full bg-gradient-to-r from-[var(--neon-blue)] to-[var(--neon-purple)] w-0" id="splash-bar" style="transition: width 1.5s cubic-bezier(0.4, 0, 0.2, 1)"></div>
+        </div>
+        <div class="text-xs font-mono mt-2 tracking-wider text-neutral-400" id="splash-status">LOADING MATRIX ARRAYS...</div>
+    </div>
+
+    <div class="max-w-7xl mx-auto space-y-6">
+
+        <header class="glass-panel rounded-2xl p-4 flex flex-col md:flex-row items-center justify-between gap-4">
+            <div class="flex items-center gap-3">
+                <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-[var(--neon-blue)] to-[var(--neon-purple)] flex items-center justify-center font-black text-xl heading-font text-black shadow-lg">
+                    Ω
+                </div>
+                <div>
+                    <h1 class="heading-font font-black text-xl md:text-2xl tracking-tight text-white flex items-center gap-2">
+                        1911 <span class="text-xs px-2 py-0.5 bg-cyan-500/20 text-[var(--neon-blue)] border border-cyan-500/30 rounded font-mono">v4.0.26</span>
+                    </h1>
+                    <p class="text-xs tracking-wider text-neutral-400 uppercase font-semibold">AI Quantum Hardware Predictive Matrix</p>
+                </div>
+            </div>
+
+            <div class="flex flex-wrap items-center gap-3">
+                <button id="rtx-toggle" onclick="toggleEngineParam('rtx')" class="px-4 py-2 rounded-xl border border-purple-500/30 bg-purple-950/20 text-xs font-bold heading-font uppercase tracking-wider transition-all duration-200 hover:bg-purple-500/20 flex items-center gap-2 text-purple-400">
+                    <span class="w-2 h-2 rounded-full bg-purple-500 shadow-[0_0_8px_#bc00dd]" id="rtx-indicator"></span> Ray Tracing
+                </button>
+                <button id="dlss-toggle" onclick="toggleEngineParam('dlss')" class="px-4 py-2 rounded-xl border border-cyan-500/30 bg-cyan-950/20 text-xs font-bold heading-font uppercase tracking-wider transition-all duration-200 hover:bg-cyan-500/20 flex items-center gap-2 text-cyan-400">
+                    <span class="w-2 h-2 rounded-full bg-cyan-500 shadow-[0_0_8px_#00f0ff]" id="dlss-indicator"></span> AI Upscaling (DLSS/FSR)
+                </button>
+                <button onclick="shareConfiguration()" class="px-4 py-2 rounded-xl bg-gradient-to-r from-[var(--neon-blue)] to-[var(--neon-purple)] text-black text-xs font-black heading-font uppercase tracking-wider transition-all duration-200 hover:brightness-125">
+                    Save Config
+                </button>
+            </div>
+        </header>
+
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+            
+            <div class="lg:col-span-5 space-y-6">
+                <div class="glass-panel rounded-2xl p-5 space-y-4">
+                    <div class="flex items-center justify-between border-b border-neutral-800 pb-3">
+                        <h2 class="heading-font font-bold text-lg text-white flex items-center gap-2">
+                            <span class="w-1.5 h-4 bg-[var(--neon-blue)] inline-block"></span> CORE ARCHITECTURE
+                        </h2>
+                        <span class="text-xs font-mono text-cyan-400" id="power-draw-estimate">0W EST. CONSUMPTION</span>
+                    </div>
+
+                    <div class="space-y-3">
+                        <div>
+                            <label class="text-xs font-bold tracking-wider text-neutral-400 block mb-1 uppercase">Graphics Processor Unit (GPU)</label>
+                            <select id="gpu-select" onchange="runSimulationEngine()" class="w-full px-3 py-2.5 rounded-xl text-sm"></select>
+                        </div>
+
+                        <div>
+                            <label class="text-xs font-bold tracking-wider text-neutral-400 block mb-1 uppercase">Central Processor Unit (CPU)</label>
+                            <select id="cpu-select" onchange="runSimulationEngine()" class="w-full px-3 py-2.5 rounded-xl text-sm"></select>
+                        </div>
+
+                        <div class="grid grid-cols-2 gap-3">
+                            <div>
+                                <label class="text-xs font-bold tracking-wider text-neutral-400 block mb-1 uppercase">System Memory (RAM)</label>
+                                <select id="ram-select" onchange="runSimulationEngine()" class="w-full px-3 py-2.5 rounded-xl text-sm"></select>
+                            </div>
+                            <div>
+                                <label class="text-xs font-bold tracking-wider text-neutral-400 block mb-1 uppercase">Thermal Dissipation</label>
+                                <select id="cooler-select" onchange="runSimulationEngine()" class="w-full px-3 py-2.5 rounded-xl text-sm"></select>
+                            </div>
+                        </div>
+
+                        <div class="grid grid-cols-2 gap-3">
+                            <div>
+                                <label class="text-xs font-bold tracking-wider text-neutral-400 block mb-1 uppercase">Mainboard Hub</label>
+                                <select id="mobo-select" class="w-full px-3 py-2.5 rounded-xl text-sm">
+                                    <option>ASUS ROG Maximus Z890 Hero</option>
+                                    <option>MSI MEG X870E Godlike</option>
+                                    <option>Gigabyte AORUS Master X</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label class="text-xs font-bold tracking-wider text-neutral-400 block mb-1 uppercase">Power Delivery Unit</label>
+                                <select id="psu-select" class="w-full px-3 py-2.5 rounded-xl text-sm">
+                                    <option>Corsair RM1000x 1000W PCIe 5.0</option>
+                                    <option>SeasoniC Prime 1300W Titanium</option>
+                                    <option>be quiet! Dark Power 850W</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="glass-panel rounded-2xl p-5 space-y-4 relative overflow-hidden">
+                    <h2 class="heading-font font-bold text-lg text-white border-b border-neutral-800 pb-3 flex items-center gap-2">
+                        <span class="w-1.5 h-4 bg-[var(--neon-purple)] inline-block"></span> CORE DIAGNOSTICS
+                    </h2>
+
+                    <div class="grid grid-cols-2 gap-4">
+                        <div class="p-3 bg-neutral-900/40 rounded-xl border border-neutral-800/60 relative">
+                            <span class="text-[10px] text-neutral-400 uppercase font-bold block mb-1 tracking-wider">Bottleneck Vector</span>
+                            <div id="bottleneck-value" class="text-xl heading-font font-black text-white">0.0%</div>
+                            <div id="bottleneck-desc" class="text-[11px] text-neutral-500 font-medium leading-tight mt-0.5">Calculating...</div>
+                        </div>
+                        <div class="p-3 bg-neutral-900/40 rounded-xl border border-neutral-800/60">
+                            <span class="text-[10px] text-neutral-400 uppercase font-bold block mb-1 tracking-wider">Thermal Estimation</span>
+                            <div id="thermal-value" class="text-xl heading-font font-black text-emerald-400">32°C</div>
+                            <div id="thermal-desc" class="text-[11px] text-neutral-500 font-medium leading-tight mt-0.5">Ambient Load</div>
+                        </div>
+                    </div>
+
+                    <div class="bg-gradient-to-r from-purple-950/20 to-cyan-950/20 border border-cyan-500/20 rounded-xl p-3.5 space-y-2">
+                        <label class="text-xs font-bold tracking-wider text-cyan-400 block uppercase heading-font">Predictive Compatibility Oracle</label>
+                        <div class="flex gap-2">
+                            <input type="text" id="oracle-input" placeholder="Enter any game name (e.g. Flight Simulator)..." class="flex-1 text-xs px-3 py-2 rounded-xl">
+                            <button onclick="queryOracleEngine()" class="px-4 py-2 rounded-xl bg-cyan-500/20 border border-cyan-400/40 hover:bg-cyan-500/40 text-cyan-300 text-xs uppercase tracking-wider font-bold heading-font transition-all">
+                                Query
+                            </button>
+                        </div>
+                        <div id="oracle-output" class="text-xs font-medium text-neutral-400 hidden p-2 bg-black/40 rounded border border-neutral-800"></div>
+                    </div>
+                </div>
+
+                <div class="glass-panel rounded-2xl p-5 space-y-4">
+                    <div class="flex items-center justify-between border-b border-neutral-800 pb-3">
+                        <h2 class="heading-font font-bold text-lg text-white flex items-center gap-2">
+                            <span class="w-1.5 h-4 bg-amber-500 inline-block"></span> SIMULATED CHASSIS matrix
+                        </h2>
+                        <div class="flex items-center gap-1.5">
+                            <span class="w-2 h-2 rounded-full bg-red-500 animate-ping"></span>
+                            <span class="text-[10px] font-mono tracking-widest text-neutral-400">3D REALTIME</span>
+                        </div>
+                    </div>
+
+                    <div class="chassis-wrapper w-full h-48 bg-neutral-950 rounded-xl relative overflow-hidden border border-neutral-800 flex items-center justify-center cursor-grab active:cursor-grabbing" id="chassis-zone">
+                        <div class="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(30,30,60,0.4)_0%,transparent_70%)]"></div>
+                        
+                        <div id="particle-injector-intake" class="absolute left-0 top-0 w-full h-full"></div>
+                        <div id="particle-injector-exhaust" class="absolute left-0 top-0 w-full h-full"></div>
+
+                        <div class="chassis-view w-40 h-40 border border-neutral-700/40 rounded-lg bg-neutral-900/60 shadow-2xl flex flex-col justify-between p-3 relative" id="chassis-box">
+                            <div class="absolute inset-0 border-2 rounded-lg opacity-40" id="chassis-rgb-glow" style="border-color: var(--neon-blue); box-shadow: inset 0 0 15px var(--neon-blue);"></div>
+                            
+                            <div class="flex justify-between items-start">
+                                <div class="w-12 h-12 bg-neutral-800 border border-neutral-600 rounded flex items-center justify-center text-[9px] font-mono text-neutral-400">CPU</div>
+                                <div class="w-8 h-12 bg-neutral-800/40 border border-neutral-700 rounded flex flex-col justify-around p-0.5">
+                                    <div class="w-full h-0.5 bg-cyan-400/60"></div>
+                                    <div class="w-full h-0.5 bg-cyan-400/60"></div>
+                                </div>
+                            </div>
+                            <div class="w-full h-8 bg-neutral-800 border border-neutral-600 rounded flex items-center justify-center text-[10px] font-mono text-neutral-400 tracking-widest" id="chassis-gpu-block">GPU</div>
+                            <div class="w-full h-6 bg-neutral-900 border border-neutral-700 rounded-sm text-[8px] font-mono text-neutral-500 flex items-center justify-center">PSU SHROUD</div>
+                        </div>
+                    </div>
+
+                    <div class="space-y-2">
+                        <label class="text-[11px] font-bold tracking-wider text-neutral-400 uppercase block">RGB Array Matrix Customization</label>
+                        <div class="flex gap-2">
+                            <button onclick="setChassisRGB('#00f0ff')" class="w-full h-6 rounded bg-cyan-500 border border-cyan-300 shadow-[0_0_8px_#00f0ff]"></button>
+                            <button onclick="setChassisRGB('#bc00dd')" class="w-full h-6 rounded bg-purple-600 border border-purple-400 shadow-[0_0_8px_#bc00dd]"></button>
+                            <button onclick="setChassisRGB('#ff0055')" class="w-full h-6 rounded bg-rose-600 border border-rose-400 shadow-[0_0_8px_#ff0055]"></button>
+                            <button onclick="setChassisRGB('#00ff66')" class="w-full h-6 rounded bg-emerald-500 border border-emerald-300 shadow-[0_0_8px_#00ff66]"></button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="lg:col-span-7 space-y-6">
+                
+                <div class="glass-panel rounded-2xl p-5 space-y-5">
+                    <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 border-b border-neutral-800 pb-4">
+                        <div>
+                            <h2 class="heading-font font-bold text-lg text-white flex items-center gap-2">
+                                <span class="w-1.5 h-4 bg-gradient-to-b from-[var(--neon-blue)] to-[var(--neon-purple)] inline-block"></span> PREDICTIVE MATRIX SIMULATOR
+                            </h2>
+                            <p class="text-xs text-neutral-400 font-medium">Real-time cross-checked framerate vector matrices</p>
+                        </div>
+                        
+                        <div class="bg-neutral-900 p-1 rounded-xl flex border border-neutral-800">
+                            <button id="res-720p" onclick="setGlobalResolution('720p')" class="px-3 py-1.5 rounded-lg text-xs font-bold heading-font transition-all text-neutral-400">720P</button>
+                            <button id="res-1080p" onclick="setGlobalResolution('1080p')" class="px-3 py-1.5 rounded-lg text-xs font-bold heading-font transition-all text-black bg-[var(--neon-blue)] neon-glow-blue">1080P</button>
+                            <button id="res-1440p" onclick="setGlobalResolution('1440p')" class="px-3 py-1.5 rounded-lg text-xs font-bold heading-font transition-all text-neutral-400">1440P</button>
+                            <button id="res-4k" onclick="setGlobalResolution('4k')" class="px-3 py-1.5 rounded-lg text-xs font-bold heading-font transition-all text-neutral-400">4K</button>
+                        </div>
+                    </div>
+
+                    <div class="w-full bg-neutral-950/60 p-3 rounded-xl border border-neutral-800/80">
+                        <canvas id="nexusPerformanceChart" class="w-full" style="max-height: 220px;"></canvas>
+                    </div>
+
+                    <div class="grid grid-cols-1 md:grid-cols-4 gap-4" id="matrix-preset-view">
+                        </div>
+                </div>
+
+                <div class="space-y-3">
+                    <h3 class="heading-font font-bold text-sm text-neutral-400 tracking-wider uppercase pl-1">Target Engine Performance Index</h3>
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4" id="games-grid-matrix">
+                        </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // COMPONENT DATA ARRAYS
+        const gpuDatabase = [
+            { id: "rtx4090", name: "NVIDIA GeForce RTX 4090 24GB", power: 450, score: 100, tier: "enthusiast" },
+            { id: "rtx4080s", name: "NVIDIA GeForce RTX 4080 Super 16GB", power: 320, score: 84, tier: "enthusiast" },
+            { id: "rx7900xtx", name: "AMD Radeon RX 7900 XTX 24GB", power: 355, score: 82, tier: "enthusiast" },
+            { id: "rtx4070ts", name: "NVIDIA GeForce RTX 4070 Ti Super 16GB", power: 285, score: 71, tier: "high" },
+            { id: "rx7800xt", name: "AMD Radeon RX 7800 XT 16GB", power: 263, score: 58, tier: "high" },
+            { id: "rtx4060ti", name: "NVIDIA GeForce RTX 4060 Ti 8GB", power: 160, score: 42, tier: "mid" },
+            { id: "rx7600xt", name: "AMD Radeon RX 7600 XT 16GB", power: 190, score: 38, tier: "mid" },
+            { id: "gtx1650", name: "NVIDIA GeForce GTX 1650 4GB", power: 75, score: 12, tier: "low" }
+        ];
+
+        const cpuDatabase = [
+            { id: "i914900k", name: "Intel Core i9-14900K (24 Cores)", power: 125, score: 98 },
+            { id: "r79800x3d", name: "AMD Ryzen 7 9800X3D (8 Cores V-Cache)", power: 120, score: 100 },
+            { id: "r77800x3d", name: "AMD Ryzen 7 7800X3D (8 Cores V-Cache)", power: 120, score: 92 },
+            { id: "i714700k", name: "Intel Core i7-14700K (20 Cores)", power: 125, score: 88 },
+            { id: "r57600x", name: "AMD Ryzen 5 7600X (6 Cores)", power: 105, score: 68 },
+            { id: "i314100", name: "Intel Core i3-14100 (4 Cores)", power: 60, score: 35 }
+        ];
+
+        const ramDatabase = [
+            { id: "ddr5_64", name: "64GB DDR5 Dual Channel @ 6400MHz", score: 1.05 },
+            { id: "ddr5_32", name: "32GB DDR5 Dual Channel @ 6000MHz", score: 1.0 },
+            { id: "ddr4_16", name: "16GB DDR4 Dual Channel @ 3200MHz", score: 0.88 },
+            { id: "ddr4_8", name: "8GB DDR4 Single Channel @ 2666MHz", score: 0.65 }
+        ];
+
+        const coolerDatabase = [
+            { id: "aio_360", name: "Premium 360mm Liquid AIO Cooler", efficiency: 0.95, baseTemp: 28 },
+            { id: "air_tower", name: "Dual-Tower Performance Air Cooler", efficiency: 0.85, baseTemp: 34 },
+            { id: "stock", name: "Factory Stock Retail Cooler", efficiency: 0.60, baseTemp: 44 }
+        ];
+
+        const targetGames = [
+            { id: "cyberpunk", name: "Cyberpunk 2077", baseFps: 55, engineType: "heavy", icon: "⚡" },
+            { id: "gtav", name: "Grand Theft Auto V", baseFps: 130, engineType: "legacy", icon: "🚗" },
+            { id: "valorant", name: "Valorant", baseFps: 340, engineType: "light", icon: "🎯" },
+            { id: "fortnite", name: "Fortnite", baseFps: 180, engineType: "mid", icon: "⛏️" },
+            { id: "rdr2", name: "Red Dead Redemption 2", baseFps: 65, engineType: "heavy", icon: "🤠" },
+            { id: "warzone", name: "Call of Duty: Warzone", baseFps: 110, engineType: "mid", icon: "🪂" },
+            { id: "minecraft", name: "Minecraft RTX Edition", baseFps: 45, engineType: "heavy", icon: "🟩" },
+            { id: "forza5", name: "Forza Horizon 5", baseFps: 95, engineType: "mid", icon: "🏁" }
+        ];
+
+        // ENGINE SIMULATION STATE METRICS
+        let currentResolution = "1080p";
+        let rtxEnabled = false;
+        let dlssEnabled = false;
+        let performanceChartInstance = null;
+
+        // MATRIX SCALING TABLES
+        const resolutionScalers = { "720p": 1.4, "1080p": 1.0, "1440p": 0.72, "4k": 0.40 };
+        const qualityScalers = { "Low": 1.35, "Medium": 1.1, "High": 1.0, "Ultra": 0.82 };
+
+        // INTIALIZATION METHOD ROUTINE
+        window.addEventListener("DOMContentLoaded", () => {
+            populateSelectElements();
+            initializeChassisRotationEngine();
+            initializeAirflowVectors();
+            
+            // Artificial delay matrix compilation simulation for visual flair
+            setTimeout(() => {
+                document.getElementById("splash-bar").style.width = "100%";
+                document.getElementById("splash-status").innerText = "MATRIX SYNCHRONIZATION COMPLETE";
+                setTimeout(() => {
+                    document.getElementById("splash-screen").style.opacity = "0";
+                    setTimeout(() => document.getElementById("splash-screen").style.display = "none", 600);
+                }, 400);
+            }, 800);
+
+            runSimulationEngine();
+        });
+
+        function populateSelectElements() {
+            const gpuSel = document.getElementById("gpu-select");
+            gpuDatabase.forEach(g => gpuSel.innerHTML += `<option value="${g.id}">${g.name}</option>`);
+
+            const cpuSel = document.getElementById("cpu-select");
+            cpuDatabase.forEach(c => cpuSel.innerHTML += `<option value="${c.id}">${c.name}</option>`);
+
+            const ramSel = document.getElementById("ram-select");
+            ramDatabase.forEach(r => ramSel.innerHTML += `<option value="${r.id}">${r.name}</option>`);
+
+            const coolerSel = document.getElementById("cooler-select");
+            coolerDatabase.forEach(co => coolerSel.innerHTML += `<option value="${co.id}">${co.id}">${co.name}</option>`);
+        }
+
+        // TOGGLE HARDWARE ENGINE MODIFIERS
+        function toggleEngineParam(param) {
+            if (param === 'rtx') {
+                rtxEnabled = !rtxEnabled;
+                const ind = document.getElementById("rtx-indicator");
+                const btn = document.getElementById("rtx-toggle");
+                if (rtxEnabled) {
+                    ind.className = "w-2 h-2 rounded-full bg-purple-500 shadow-[0_0_8px_#bc00dd]";
+                    btn.className = btn.className.replace("border-purple-500/30", "border-purple-500");
+                } else {
+                    ind.className = "w-2 h-2 rounded-full bg-neutral-600";
+                    btn.className = btn.className.replace("border-purple-500", "border-purple-500/30");
+                }
+            } else if (param === 'dlss') {
+                dlssEnabled = !dlssEnabled;
+                const ind = document.getElementById("dlss-indicator");
+                const btn = document.getElementById("dlss-toggle");
+                if (dlssEnabled) {
+                    ind.className = "w-2 h-2 rounded-full bg-cyan-500 shadow-[0_0_8px_#00f0ff]";
+                    btn.className = btn.className.replace("border-cyan-500/30", "border-cyan-500");
+                } else {
+                    ind.className = "w-2 h-2 rounded-full bg-neutral-600";
+                    btn.className = btn.className.replace("border-cyan-500", "border-cyan-500/30");
+                }
+            }
+            runSimulationEngine();
+        }
+
+        function setGlobalResolution(res) {
+            ["720p", "1080p", "1440p", "4k"].forEach(r => {
+                const el = document.getElementById(`res-${r}`);
+                el.className = "px-3 py-1.5 rounded-lg text-xs font-bold heading-font transition-all text-neutral-400";
+            });
+            const activeEl = document.getElementById(`res-${res}`);
+            activeEl.className = "px-3 py-1.5 rounded-lg text-xs font-bold heading-font transition-all text-black bg-[var(--neon-blue)] neon-glow-blue";
+            
+            currentResolution = res;
+            runSimulationEngine();
+        }
+
+        // PREDICTIVE ARCHITECTURE MATH CORE CALCULATION ENGINE
+        function runSimulationEngine() {
+            const selectedGpu = gpuDatabase.find(g => g.id === document.getElementById("gpu-select").value);
+            const selectedCpu = cpuDatabase.find(c => c.id === document.getElementById("cpu-select").value);
+            const selectedRam = ramDatabase.find(r => r.id === document.getElementById("ram-select").value);
+            const selectedCooler = coolerDatabase.find(co => co.id === document.getElementById("cooler-select").value) || coolerDatabase[0];
+
+            // Power Computation Matrix
+            const totalPower = selectedGpu.power + selectedCpu.power + 60; 
+            document.getElementById("power-draw-estimate").innerText = `${totalPower}W EST. CONSUMPTION`;
+
+            // Bottleneck Mathematical Vector Index Calculation
+            let bottleneckPercent = 0;
+            let bottleneckDesc = "";
+            const differential = selectedCpu.score - selectedGpu.score;
+
+            if (differential > 15) {
+                bottleneckPercent = Math.min(Math.round((differential - 15) * 0.8), 45);
+                bottleneckDesc = "GPU Bottleneck: Core processor waiting on graphics vector pipeline.";
+                document.getElementById("bottleneck-value").className = "text-xl heading-font font-black text-amber-400";
+            } else if (differential < -10) {
+                bottleneckPercent = Math.min(Math.round(Math.abs(differential + 10) * 1.2), 65);
+                bottleneckDesc = "CPU Bottleneck: Graphics asset streaming bounded by structural core cycles.";
+                document.getElementById("bottleneck-value").className = "text-xl heading-font font-black text-rose-500";
+            } else {
+                bottleneckPercent = Math.max(Math.round(Math.abs(differential) * 0.3), 2);
+                bottleneckDesc = "Optimal Symmetry: Architecture processing throughput balanced optimally.";
+                document.getElementById("bottleneck-value").className = "text-xl heading-font font-black text-emerald-400";
+            }
+            document.getElementById("bottleneck-value").innerText = `${bottleneckPercent}%`;
+            document.getElementById("bottleneck-desc").innerText = bottleneckDesc;
+
+            // Thermal Simulation Processing Array
+            const thermalMultiplier = (totalPower / 500) * (1 / selectedCooler.efficiency);
+            const loadTemp = Math.round(selectedCooler.baseTemp + (38 * thermalMultiplier));
+            const thermVal = document.getElementById("thermal-value");
+            thermVal.innerText = `${loadTemp}°C`;
+            if (loadTemp > 82) {
+                thermVal.className = "text-xl heading-font font-black text-rose-500";
+                document.getElementById("thermal-desc").innerText = "Thermal Throttling Hazard Detected";
+            } else if (loadTemp > 68) {
+                thermVal.className = "text-xl heading-font font-black text-amber-400";
+                document.getElementById("thermal-desc").innerText = "High Engine Thermal Load State";
+            } else {
+                thermVal.className = "text-xl heading-font font-black text-emerald-400";
+                document.getElementById("thermal-desc").innerText = "Stable Continuous Thermal Index";
+            }
+
+            // DYNAMIC RENDERING OF PRESET RESOLUTION VALUE BLOCKS
+            const presetContainer = document.getElementById("matrix-preset-view");
+            presetContainer.innerHTML = "";
+            
+            const qualityPresets = ["Low", "Medium", "High", "Ultra"];
+            const chartDataArray = [];
+
+            qualityPresets.forEach(preset => {
+                const simulatedFps = calculateBaseCompositeFps(selectedGpu, selectedCpu, selectedRam, currentResolution, preset);
+                chartDataArray.push(simulatedFps);
+
+                presetContainer.innerHTML += `
+                    <div class="p-3 bg-neutral-900/40 rounded-xl border border-neutral-800 text-center transition-all hover:scale-105">
+                        <div class="text-[10px] font-bold text-neutral-400 uppercase tracking-widest">${preset}</div>
+                        <div class="text-2xl heading-font font-black text-white my-1 animate-pulse">${simulatedFps}</div>
+                        <div class="text-[9px] font-mono tracking-wider text-cyan-400">FPS MATRIX</div>
+                    </div>
+                `;
+            });
+
+            // UPDATE PERFORMANCE ANALYTICAL CHART
+            renderPerformanceChart(qualityPresets, chartDataArray);
+
+            // RENDER INDIVIDUAL TARGET GAME METRICS CARDS
+            renderGameMatrices(selectedGpu, selectedCpu, selectedRam);
+        }
+
+        function calculateBaseCompositeFps(gpu, cpu, ram, res, quality) {
+            let baseScore = gpu.score * 3.2;
+            
+            // Apply resolution down-scaling parameters
+            baseScore *= resolutionScalers[res];
+            // Apply graphical complexity down-scaling parameters
+            baseScore *= qualityScalers[quality];
+            // Apply CPU structural bottlenecks to pipeline speed calculation
+            const cpuFactor = cpu.score / 100;
+            baseScore *= (0.7 + (cpuFactor * 0.3));
+            // Apply RAM channel data processing speed parameters
+            baseScore *= ram.score;
+
+            // Compute Global Ray Tracing processing impacts
+            if (rtxEnabled) {
+                baseScore *= (gpu.tier === "enthusiast") ? 0.62 : 0.40;
+            }
+            // Compute Global AI Super-sampling performance modifiers
+            if (dlssEnabled) {
+                baseScore *= 1.45;
+            }
+
+            return Math.max(Math.round(baseScore), 12);
+        }
+
+        function renderPerformanceChart(labels, data) {
+            const ctx = document.getElementById('nexusPerformanceChart').getContext('2d');
+            
+            if (performanceChartInstance) {
+                performanceChartInstance.destroy();
+            }
+
+            performanceChartInstance = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        label: `${currentResolution.toUpperCase()} Target Framing Arc`,
+                        data: data,
+                        borderColor: '#00f0ff',
+                        backgroundColor: 'rgba(0, 240, 255, 0.08)',
+                        borderWidth: 2,
+                        fill: true,
+                        tension: 0.4,
+                        pointBackgroundColor: '#bc00dd',
+                        pointBorderColor: '#fff',
+                        pointRadius: 4
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: { legend: { display: false } },
+                    scales: {
+                        x: { grid: { color: 'rgba(255,255,255,0.04)' }, ticks: { color: '#94a3b8', font: { family: 'Orbitron' } } },
+                        y: { grid: { color: 'rgba(255,255,255,0.04)' }, ticks: { color: '#94a3b8' }, beginAtZero: true }
+                    }
+                }
+            });
+        }
+
+        function renderGameMatrices(gpu, cpu, ram) {
+            const grid = document.getElementById("games-grid-matrix");
+            grid.innerHTML = "";
+
+            targetGames.forEach(game => {
+                let gameModifier = 1.0;
+                if (game.engineType === "heavy") gameModifier = 0.65;
+                if (game.engineType === "light") gameModifier = 2.4;
+                if (game.engineType === "legacy") gameModifier = 1.6;
+
+                let calculatedFps = calculateBaseCompositeFps(gpu, cpu, ram, currentResolution, "High") * gameModifier;
+                calculatedFps = Math.max(Math.round(calculatedFps), 15);
+
+                // Stability Index Assessment calculation based on component constraints
+                let stability = "STABLE EXECUTOR";
+                let stabilityColor = "text-emerald-400 border-emerald-500/20 bg-emerald-500/5";
+                if (calculatedFps < 45) {
+                    stability = "FRAMEDROP TRACE";
+                    stabilityColor = "text-rose-400 border-rose-500/20 bg-rose-500/5";
+                } else if (calculatedFps < 75) {
+                    stability = "MARGINAL FLUIDITY";
+                    stabilityColor = "text-amber-400 border-amber-500/20 bg-amber-500/5";
+                }
+
+                grid.innerHTML += `
+                    <div class="glass-panel rounded-xl p-4 flex items-center justify-between relative overflow-hidden group hover:border-cyan-500/50 transition-all duration-300">
+                        <div class="flex items-center gap-3">
+                            <div class="w-10 h-10 rounded-lg bg-neutral-900 flex items-center justify-center text-lg border border-neutral-800 group-hover:scale-110 transition-transform">
+                                ${game.icon}
+                            </div>
+                            <div>
+                                <h4 class="font-bold heading-font text-white text-sm tracking-wide">${game.name}</h4>
+                                <span class="text-[10px] font-mono border px-1.5 py-0.5 rounded tracking-widest ${stabilityColor}">
+                                    ${stability}
+                                </span>
+                            </div>
+                        </div>
+                        <div class="text-right">
+                            <div class="text-2xl font-black heading-font text-transparent bg-clip-text bg-gradient-to-l from-white to-cyan-300">${calculatedFps}</div>
+                            <span class="text-[9px] font-mono tracking-widest text-neutral-400 block">EST. FPS</span>
+                        </div>
+                    </div>
+                `;
+            });
+        }
+
+        // ORACLE COMPATIBILITY ENQUIRY MATCH ENGINE
+        function queryOracleEngine() {
+            const query = document.getElementById("oracle-input").value.trim();
+            const outBox = document.getElementById("oracle-output");
+            if (!query) return;
+
+            outBox.classList.remove("hidden");
+            outBox.innerHTML = `<span class="animate-pulse text-[11px] font-mono text-cyan-400">CONNECTING TO COGNITIVE ARCHIVE VECTOR LAYER...</span>`;
+
+            setTimeout(() => {
+                const selectedGpu = gpuDatabase.find(g => g.id === document.getElementById("gpu-select").value);
+                let processingPowerIndex = selectedGpu.score;
+                if (rtxEnabled) processingPowerIndex *= 0.7;
+
+                let outputVerdict = "";
+                if (processingPowerIndex > 75) {
+                    outputVerdict = `AI Analysis Vector: Architecture holds complete computational headroom for "${query}". Expected response arrays exceed continuous 90Hz metrics at modern bounds. Proceed safely.`;
+                } else if (processingPowerIndex > 40) {
+                    outputVerdict = `AI Analysis Vector: Target profile "${query}" passes standard compilation vectors. High-tier optimizations recommended to guarantee continuous fluid framing matrices.`;
+                } else {
+                    outputVerdict = `AI Analysis Vector: Insufficient computational resources detected for "${query}". Structural rendering pipelines risk high asset deployment constraints. Hardware modification advised.`;
+                }
+                outBox.innerHTML = `<span class="text-xs text-neutral-300 leading-relaxed font-semibold block">${outputVerdict}</span>`;
+            }, 600);
+        }
+
+        // SAVE AND SHARE SIMULATION ARRAYS CONFIGURATION
+        function shareConfiguration() {
+            const gpu = document.getElementById("gpu-select").value;
+            const cpu = document.getElementById("cpu-select").value;
+            const configString = `NEXUS-RIG-//GPU:${gpu}//CPU:${cpu}//RES:${currentResolution}//RTX:${rtxEnabled}`;
+            
+            navigator.clipboard.writeText(configString).then(() => {
+                alert(`Configuration matrix string copied to local systems clipboard:\n${configString}`);
+            }).catch(() => {
+                alert(`System Matrix Signature Generated:\n${configString}`);
+            });
+        }
+
+        // CHASSIS ROTATION INTERACTIVE PHYSICS MODEL
+        function initializeChassisRotationEngine() {
+            const zone = document.getElementById("chassis-zone");
+            const box = document.getElementById("chassis-box");
+            let isDragging = false;
+            let currentX = 0;
+            let currentY = 0;
+
+            zone.addEventListener("mousedown", () => isDragging = true);
+            window.addEventListener("mouseup", () => {
+                isDragging = false;
+                box.style.transform = `rotateY(0deg) rotateX(0deg)`;
+            });
+
+            window.addEventListener("mousemove", (e) => {
+                if (!isDragging) return;
+                const rect = zone.getBoundingClientRect();
+                const x = e.clientX - rect.left - (rect.width / 2);
+                const y = e.clientY - rect.top - (rect.height / 2);
+                
+                currentX = (x / rect.width) * 75; 
+                currentY = -(y / rect.height) * 75;
+
+                box.style.transform = `rotateY(${currentX}deg) rotateX(${currentY}deg)`;
+            });
+
+            // Touch support for mobile layouts
+            zone.addEventListener("touchstart", () => isDragging = true);
+            window.addEventListener("touchend", () => {
+                isDragging = false;
+                box.style.transform = `rotateY(0deg) rotateX(0deg)`;
+            });
+            zone.addEventListener("touchmove", (e) => {
+                if (!isDragging) return;
+                const rect = zone.getBoundingClientRect();
+                const touch = e.touches[0];
+                const x = touch.clientX - rect.left - (rect.width / 2);
+                const y = touch.clientY - rect.top - (rect.height / 2);
+                currentX = (x / rect.width) * 70;
+                currentY = -(y / rect.height) * 70;
+                box.style.transform = `rotateY(${currentX}deg) rotateX(${currentY}deg)`;
+            });
+        }
+
+        // CHASSIS AIRFLOW ENGINE SIMULATORS
+        function initializeAirflowVectors() {
+            const intakeBox = document.getElementById("particle-injector-intake");
+            const exhaustBox = document.getElementById("particle-injector-exhaust");
+
+            setInterval(() => {
+                createAirParticle(intakeBox, "left-3 md:left-6 top-1/2", "intake-flow", "#00f0ff");
+                createAirParticle(exhaustBox, "right-12 md:right-16 top-1/3", "exhaust-flow", "#ff0055");
+            }, 180);
+        }
+
+        function createAirParticle(parent, positionClasses, animationName, colorHex) {
+            const p = document.createElement("div");
+            p.className = `fan-particle ${positionClasses}`;
+            p.style.backgroundColor = colorHex;
+            p.style.boxShadow = `0 0 6px ${colorHex}`;
+            p.style.animation = `${animationName} 1.2s linear forwards`;
+            parent.appendChild(p);
+            setTimeout(() => p.remove(), 1200);
+        }
+
+        function setChassisRGB(colorHex) {
+            const targetGlow = document.getElementById("chassis-rgb-glow");
+            const gpuBlock = document.getElementById("chassis-gpu-block");
+            
+            targetGlow.style.borderColor = colorHex;
+            targetGlow.style.boxShadow = `inset 0 0 15px ${colorHex}`;
+            gpuBlock.style.borderColor = colorHex;
+            gpuBlock.style.color = colorHex;
+        }
+    </script>
+</body>
+</html>
